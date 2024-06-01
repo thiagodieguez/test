@@ -30,7 +30,7 @@ jobs:
 
     - name: Clone new repository
       run: |
-        git clone https://x-access-token:${{ secrets.ORG_ADMIN_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.event.inputs.repo_name }}.git temp-repo
+        git clone https://x-access-token:${{ secrets.ORG_ADMIN_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.repository_name }}.git temp-repo
 
     - name: Copy files to new repository
       run: |
