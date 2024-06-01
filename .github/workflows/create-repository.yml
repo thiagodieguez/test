@@ -50,6 +50,7 @@ jobs:
     - name: Commit and push files to new repository
       run: |
         cd temp-repo
+        git config --global init.defaultBranch main
         git init .
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
