@@ -3,8 +3,12 @@ name: Create New Repository
 on:
   workflow_dispatch:
     inputs:
-      repo_name:
-        description: 'Repository name'
+      original_repo_name:
+        description: 'Original repository name'
+        required: true
+        default: "test"
+      new_repo_name:
+        description: 'New repository name'
         required: true
 
 jobs:
@@ -22,7 +26,7 @@ jobs:
         -H "Authorization: token ${{ secrets.ORG_ADMIN_TOKEN }}" \
         -H "Accept: application/vnd.github.v3+json" \
         https://api.github.com/user/repos \
-        -d "{\"name\":\"${{ github.event.inputs.repo_name }}\",\"private\":true}")
+        -d "{\"name\":\"${{ github.event.inputs.new_repo_name }}\",\"private\":true}")
         
         repo_url=$(echo $response | jq -r '.html_url')
         echo "Repository URL: $repo_url"
@@ -30,7 +34,7 @@ jobs:
 
     - name: Clone new repository
       run: |
-        git clone https://x-access-token:${{ secrets.ORG_ADMIN_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.repository_name }}.git temp-repo
+        git clone https://x-access-token:${{ secrets.ORG_ADMIN_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.event.inputs.original_repo_name }}.git temp-repo
 
     - name: Copy files to new repository
       run: |
