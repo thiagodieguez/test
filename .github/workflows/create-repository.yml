@@ -19,7 +19,7 @@ jobs:
     - name: Install jq
       run: sudo apt-get install -y jq
 
-    - name: Create repository
+    - name: Create repository [if not exists]
       id: create_repo
       run: |
         response=$(curl -X POST \
@@ -30,7 +30,6 @@ jobs:
         
         repo_url=$(echo $response | jq -r '.html_url')
         echo "Repository URL: $repo_url"
-        echo "::set-output name=repo_url::$repo_url"
 
     - name: Clone new repository
       run: |
@@ -51,8 +50,10 @@ jobs:
     - name: Commit and push files to new repository
       run: |
         cd temp-repo
+        git init .
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git config --global user.name "github-actions[bot]"
         git add .
-        git commit -m "Initial commit from GitHub Action"
-        git push origin main
+        git commit -m "Initial commit"
+        git remote add origin https://x-access-token:${{ secrets.ORG_ADMIN_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.event.inputs.new_repo_name }}.git
+        git push -u origin main
