@@ -23,25 +23,23 @@ jobs:
         -H "Accept: application/vnd.github.v3+json" \
         https://api.github.com/user/repos \
         -d "{\"name\":\"${{ github.event.inputs.repo_name }}\",\"private\":true}")
-
-        echo "Response: $response"
         
         repo_url=$(echo $response | jq -r '.html_url')
         echo "Repository URL: $repo_url"
         echo "::set-output name=repo_url::$repo_url"
-      env:
-        PERSONAL_ACCESS_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
 
     - name: Clone new repository
       run: |
         git clone https://x-access-token:${{ secrets.ORG_ADMIN_TOKEN }}@github.com/${{ github.repository_owner }}/${{ github.event.inputs.repo_name }}.git temp-repo
-      env:
-        PERSONAL_ACCESS_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
 
     - name: Copy files to new repository
       run: |
         rsync -av --progress . ./temp-repo --exclude .git --exclude temp-repo --exclude .github
       working-directory: ${{ github.workspace }}
+
+    - name: Echo copied files
+      run: |
+        ls -a temp-repo
 
     - name: Commit and push files to new repository
       run: |
