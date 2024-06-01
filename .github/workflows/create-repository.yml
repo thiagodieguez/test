@@ -18,10 +18,16 @@ jobs:
     - name: Create repository
       id: create_repo
       run: |
-        curl -X POST \
+        response=$(curl -X POST \
         -H "Authorization: token ${{ secrets.ORG_ADMIN_TOKEN }}" \
         -H "Accept: application/vnd.github.v3+json" \
         https://api.github.com/user/repos \
-        -d "{\"name\":\"${{ github.event.inputs.repo_name }}\",\"private\":true}"
+        -d "{\"name\":\"${{ github.event.inputs.repo_name }}\",\"private\":true}")
+        
+        echo "Response: $response"
+        
+        repo_url=$(echo $response | jq -r '.html_url')
+        
+        echo "Repository URL: $repo_url"
       env:
         GITHUB_TOKEN: ${{ secrets.ORG_ADMIN_TOKEN }}
