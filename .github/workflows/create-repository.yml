@@ -40,10 +40,9 @@ jobs:
       run: |
         ls -a temp-repo
 
-    - name: Copy files to new repository
+    - name: Delete .git and .github directories
       run: |
-        rsync -av --progress . ./temp-repo --exclude .git --exclude temp-repo --exclude .github
-      working-directory: ${{ github.workspace }}
+        rm -rf temp-repo/.git temp-repo/.github
 
     - name: Echo copied files
       run: |
